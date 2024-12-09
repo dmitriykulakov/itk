@@ -2,6 +2,7 @@ package encryption
 
 import (
 	"crypto/rsa"
+	"fmt"
 	"testing"
 )
 
@@ -108,4 +109,95 @@ func TestRsa(t *testing.T) {
 			t.Logf("Test %d: OK, expected %s, result %s: OK", i+1, r.message, decrypted)
 		}
 	}
+
+	numbers := []int{1, 2, 3, 4, 5}
+
+	// Получение подслайса с индексами от 1 до 3 (не включительно)
+	subSlice := numbers[1:3]
+	fmt.Println("Subslice:", subSlice) // Output: [2 3]
+
+	// Получение подслайса с индексами от 2 до конца слайса
+	subSlice2 := numbers[2:]
+	fmt.Println("Subslice2:", subSlice2) // Output: [3 4 5]
+
+	// Получение подслайса с начала до индекса 3 (не включительно)
+	subSlice3 := numbers[:3]
+	fmt.Println("Subslice3:", subSlice3) // Output: [1 2 3]
+
+	// Получение копии исходного слайса
+	var copySlice []int
+	var copySlice2 []int = make([]int, 3, 10)
+	copySlice = append(copySlice, numbers[:]...)
+	value := copy(copySlice2, numbers)
+	numbers[0] = 10
+
+	fmt.Println("numbers:", numbers)             // Output: [1 2 3 4 5]
+	fmt.Println("CopySlice:", copySlice)         // Output: [1 2 3 4 5]
+	fmt.Println("CopySlice:", copySlice2, value) // Output: [1 2 3 4 5]
+	numbers = filterSlice(numbers, filter)
+	fmt.Println("numbers:", numbers) // Output: [1 2 3 4 5]
+
+	type Person struct {
+		Name    string
+		Age     int
+		Address Address
+	}
+
+	var p Person
+	p.Name = "Alice"
+	p.Age = 30
+	p.Address = Address{City: "Город", Country: "Страна"}
+	fmt.Println(p.Address.City)
+
+	// Интерфейс для определения, может ли автомобиль ехать
+
+	myCar := Car{Brand: "Toyota"}
+
+	letsGo(myCar, myCar)
+}
+
+type Address struct {
+	City, Country string
+}
+
+var filter = func(value int) bool {
+	return value%2 == 0
+}
+
+type Drivable interface {
+	Drive()
+}
+
+// Интерфейс для определения, может ли автомобиль остановиться
+type Stoppable interface {
+	Stop()
+}
+
+// Тип данных Car реализует оба интерфейса
+type Car struct {
+	Brand string
+}
+
+// Методы для реализации интерфейсов Drivable и Stoppable
+func (c Car) Drive() {
+	fmt.Printf("%s is driving", c.Brand)
+}
+
+func (c Car) Stop() {
+	fmt.Printf("%s stopped", c.Brand)
+}
+
+func letsGo(d Drivable, s Stoppable) {
+	d.Drive()
+	s.Stop()
+}
+
+func filterSlice(slice []int, filterFunc func(int) bool) []int {
+	var result []int
+	for _, v := range slice {
+		if filterFunc(v) {
+			result = append(result, v)
+		}
+	}
+	return result
 }
