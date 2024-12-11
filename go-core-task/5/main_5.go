@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func contains(slice1 []int, slice2 []int) ([]int, bool) {
+func contains(slice1 []int, slice2 []int) (bool, []int) {
 	result := make([]int, 0, len(slice1))
 	mapa := make(map[int]bool, len(slice1))
 	for _, number := range slice1 {
@@ -13,7 +13,7 @@ func contains(slice1 []int, slice2 []int) ([]int, bool) {
 			result = append(result, number)
 		}
 	}
-	return result, len(result) > 0
+	return len(result) > 0, result
 }
 
 func main() {

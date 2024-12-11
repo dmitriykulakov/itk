@@ -19,7 +19,7 @@ func TestContains(t *testing.T) {
 		{[]int{}, []int{65, 3, 58, 678, 64}, []int{}, false},
 		{[]int{}, []int{}, []int{}, false}}
 	for i, r := range test {
-		result, ok := contains(r.slice1, r.slice2)
+		ok, result := contains(r.slice1, r.slice2)
 		if len(result) == 0 && ok == r.result {
 			t.Logf("Test %d: OK, expected %v, result %v, ok expected %v, result %v: OK", i+1, r.want, result, r.result, ok)
 		} else {
