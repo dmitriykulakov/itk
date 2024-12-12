@@ -1,44 +1,46 @@
 package main
 
 import (
-	"slices"
+	"context"
+	"fmt"
 	"testing"
+	"time"
 )
 
-func TestContains(t *testing.T) {
-	test := []struct {
-		slice1 []int
-		slice2 []int
-		want   []int
-		result bool
-	}{
-		{[]int{65, 3, 58, 678, 64}, []int{64, 2, 3, 43}, []int{64, 3}, true},
-		{[]int{65, 3, 58, 678, 64}, []int{64, 678, 58, 3, 65}, []int{64, 678, 58, 3, 65}, true},
-		{[]int{65, 3, 58, 678, 64}, []int{66, 2, 4, 43}, []int{}, false},
-		{[]int{65, 3, 58, 678, 64}, []int{}, []int{}, false},
-		{[]int{}, []int{65, 3, 58, 678, 64}, []int{}, false},
-		{[]int{}, []int{}, []int{}, false}}
-	for i, r := range test {
-		result, ok := contains(r.slice1, r.slice2)
-		if len(result) == 0 && ok == r.result {
-			t.Logf("Test %d: OK, expected %v, result %v, ok expected %v, result %v: OK", i+1, r.want, result, r.result, ok)
-		} else {
-			flag := true
-			if len(r.want) == len(result) {
-				for _, value := range r.want {
-					if !slices.Contains(result, value) {
-						flag = false
-						continue
-					}
-				}
-			} else {
-				flag = false
-			}
-			if flag && ok == r.result {
-				t.Logf("Test %d: OK, expected %v, result %v, ok expected %v, result %v: OK", i+1, r.want, result, r.result, ok)
-			} else {
-				t.Errorf("Test %d: expected %v, result %v, ok expected %v, result %v: OK", i+1, r.want, result, r.result, ok)
-			}
+func TestRandom1(t *testing.T) {
+	ch := randomGenerator(time.Second * 2)
+	counter := 0
+	for elem := range ch {
+		fmt.Println(elem)
+		counter++
+		if counter > 3 {
+			time.Sleep(time.Second * 5)
 		}
+	}
+	_, close := <-ch
+	if !close {
+		t.Logf("Test: OK\n")
+	} else {
+		t.Errorf("Test FAIL\n")
+	}
+}
+
+func TestRandom2(t *testing.T) {
+	counter := 0
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	ch := randomGenerator2(ctx)
+	for elem := range ch {
+		fmt.Println(elem)
+		counter++
+		if counter > 3 {
+			cancel()
+		}
+	}
+	_, close := <-ch
+	if !close {
+		t.Logf("Test: OK\n")
+	} else {
+		t.Errorf("Test FAIL\n")
 	}
 }
